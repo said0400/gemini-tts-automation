@@ -1,0 +1,34 @@
+name: Gemini Native TTS Engine
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # يتيح لك تشغيله يدوياً بضغطة زر
+
+jobs:
+  run-tts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        pip install google-genai
+
+    - name: Generate Audio File
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python generate_audio.py
+
+    - name: Upload Generated Audio
+      uses: actions/upload-artifact@v4
+      with:
+        name: gemini-tts-voice
+        path: final_output.wav
